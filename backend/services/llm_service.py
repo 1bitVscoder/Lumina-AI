@@ -1,4 +1,5 @@
 import httpx
+import asyncio
 from typing import List, Dict, Optional
 from services.key_rotator import key_rotator
 
@@ -69,10 +70,12 @@ async def generate_gemini_content(
             try:
                 response = await client.post(url, json=payload, timeout=30.0)
                 
-                # If key is rate limited (429) or invalid (400/403)
-                if response.status_code in [429, 400, 403]:
+                # If key is rate limited (429), invalid (400/403), or server has transient issues (500/502/503/504)
+                if response.status_code in [429, 400, 403, 500, 502, 503, 504]:
                     key_rotator.mark_cooldown(active_key)
-                    # Retry using a different key
+                    # Introduce a 1-second delay for transient server errors to allow recovery
+                    if response.status_code in [500, 502, 503, 504]:
+                        await asyncio.sleep(1.0)
                     continue
                     
                 response.raise_for_status()
@@ -91,9 +94,12 @@ async def generate_gemini_content(
                 key_rotator.mark_cooldown(active_key)
                 if attempt == max_retries - 1:
                     raise Exception(f"Gemini API returned error state: {str(e)}")
+                # Small sleep before retry
+                await asyncio.sleep(1.0)
             except Exception as e:
                 if attempt == max_retries - 1:
                     raise e
+                await asyncio.sleep(1.0)
                     
     raise Exception("All rotation and fallback keys failed to respond successfully.")
 

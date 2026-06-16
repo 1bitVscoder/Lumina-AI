@@ -150,12 +150,19 @@ class ChatNotifier extends StateNotifier<ChatState> {
       isTyping: true,
     );
 
+    await _sendHttpRequest(userMessage);
+  }
+
+  Future<void> _sendHttpRequest(Message userMessage) async {
+    final user = supabase.Supabase.instance.client.auth.currentUser;
+    if (user == null) return;
+
     try {
       final dio = _ref.read(dioProvider);
       
       // Convert history messages to expected backend JSON format
       final formattedHistory = state.messages
-          .where((m) => m.id != 'welcome') // skip static welcome message
+          .where((m) => m.id != 'welcome' && m.role != 'error') // skip static welcome and error messages
           .map((m) => {
                 'role': m.role,
                 'content': m.content,
@@ -165,8 +172,8 @@ class ChatNotifier extends StateNotifier<ChatState> {
       final response = await dio.post('/chat', data: {
         'user_id': user.id,
         'conversation_id': state.conversationId,
-        'message': text,
-        'image_base64': imageBase64,
+        'message': userMessage.content,
+        'image_base64': userMessage.imageUrl,
         'history': formattedHistory,
       });
 
@@ -207,8 +214,46 @@ class ChatNotifier extends StateNotifier<ChatState> {
         }
       } else {
         debugPrint("Chat message sending failed: $e");
+        // Append error message locally
+        final aiErrorMessage = Message(
+          id: 'err-${DateTime.now().millisecondsSinceEpoch}',
+          conversationId: state.conversationId ?? 'new',
+          userId: 'system',
+          role: 'error',
+          content: 'Connection lost or server unavailable. Tap to retry.',
+          createdAt: DateTime.now(),
+        );
+        state = state.copyWith(
+          messages: [...state.messages, aiErrorMessage],
+        );
       }
     }
+  }
+
+  Future<void> retryLastMessage() async {
+    final messages = List<Message>.from(state.messages);
+    if (messages.isEmpty) return;
+
+    // Remove the error message if it's the last message
+    if (messages.last.role == 'error') {
+      messages.removeLast();
+    }
+
+    // Find the last user message
+    final lastUserMsgIdx = messages.lastIndexWhere((m) => m.role == 'user');
+    if (lastUserMsgIdx == -1) return;
+
+    final lastUserMsg = messages[lastUserMsgIdx];
+
+    // Remove all trailing messages after that user message
+    final trimmedMessages = messages.sublist(0, lastUserMsgIdx + 1);
+
+    state = state.copyWith(
+      messages: trimmedMessages,
+      isTyping: true,
+    );
+
+    await _sendHttpRequest(lastUserMsg);
   }
 
   Future<void> clearHistory() async {
@@ -251,6 +296,17 @@ class ChatNotifier extends StateNotifier<ChatState> {
 
   void clearRateLimit() {
     state = state.copyWith(rateLimitResetAt: null);
+  }
+
+  void setMessageReaction(String messageId, String? reaction) {
+    state = state.copyWith(
+      messages: state.messages.map((m) {
+        if (m.id == messageId) {
+          return m.copyWith(reaction: reaction);
+        }
+        return m;
+      }).toList(),
+    );
   }
 }
 

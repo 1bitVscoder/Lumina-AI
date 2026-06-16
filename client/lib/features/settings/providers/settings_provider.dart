@@ -38,7 +38,7 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     themeMode: ThemeMode.system,
     autoplayTts: false,
     aiName: 'Lumina',
-    soundscape: 'none',
+    soundscape: 'lofi',
   )) {
     loadSettings();
   }
@@ -56,7 +56,7 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
 
       final autoplayTts = ttsStr == 'true';
       final aiName = nameStr ?? 'Lumina';
-      final soundscape = soundscapeStr ?? 'none';
+      final soundscape = soundscapeStr ?? 'lofi';
 
       state = SettingsState(
         themeMode: themeMode,

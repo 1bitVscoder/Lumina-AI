@@ -26,6 +26,7 @@ class ChatInputBar extends StatefulWidget {
 
 class _ChatInputBarState extends State<ChatInputBar> with SingleTickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   bool _canSend = false;
   late AnimationController _sendBounceController;
   late Animation<double> _sendScaleAnimation;
@@ -53,6 +54,7 @@ class _ChatInputBarState extends State<ChatInputBar> with SingleTickerProviderSt
   void dispose() {
     _controller.removeListener(_onTextChanged);
     _controller.dispose();
+    _focusNode.dispose();
     _sendBounceController.dispose();
     super.dispose();
   }
@@ -250,34 +252,40 @@ class _ChatInputBarState extends State<ChatInputBar> with SingleTickerProviderSt
                 
                 // Text Input Pill
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: inputBgColor,
-                      borderRadius: BorderRadius.circular(LuminaRadius.input),
-                    ),
-                    child: Row(
-                      children: [
-                        const SizedBox(width: LuminaSpacing.md),
-                        Expanded(
-                          child: TextField(
-                            controller: _controller,
-                            maxLines: 5,
-                            minLines: 1,
-                            enabled: widget.enabled,
-                            style: GoogleFonts.dmSans(
-                              fontSize: LuminaTypography.sizeBody,
-                              color: textColor,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      _focusNode.requestFocus();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: inputBgColor,
+                        borderRadius: BorderRadius.circular(LuminaRadius.input),
+                      ),
+                      child: Row(
+                        children: [
+                          const SizedBox(width: LuminaSpacing.md),
+                          Expanded(
+                            child: TextField(
+                              controller: _controller,
+                              focusNode: _focusNode,
+                              maxLines: 5,
+                              minLines: 1,
+                              enabled: widget.enabled,
+                              style: GoogleFonts.dmSans(
+                                fontSize: LuminaTypography.sizeBody,
+                                color: textColor,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: widget.enabled ? "Type something..." : "Locked",
+                                hintStyle: GoogleFonts.dmSans(color: hintColor),
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                                isDense: true,
+                              ),
+                              onSubmitted: (_) => _handleSend(),
                             ),
-                            decoration: InputDecoration(
-                              hintText: widget.enabled ? "Type something..." : "Locked",
-                              hintStyle: GoogleFonts.dmSans(color: hintColor),
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                              isDense: true,
-                            ),
-                            onSubmitted: (_) => _handleSend(),
                           ),
-                        ),
                         
                         // Voice Mic Icon (Replaced with VoiceInputButton)
                         if (widget.enabled)
@@ -306,6 +314,7 @@ class _ChatInputBarState extends State<ChatInputBar> with SingleTickerProviderSt
                     ),
                   ),
                 ),
+              ),
                 
                 const SizedBox(width: LuminaSpacing.sm),
 

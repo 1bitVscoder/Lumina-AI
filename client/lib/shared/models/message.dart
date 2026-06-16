@@ -6,6 +6,7 @@ class Message {
   final String content;
   final String? imageUrl;
   final DateTime createdAt;
+  final String? reaction;
 
   Message({
     required this.id,
@@ -15,6 +16,7 @@ class Message {
     required this.content,
     this.imageUrl,
     required this.createdAt,
+    this.reaction,
   });
 
   factory Message.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class Message {
       createdAt: json['created_at'] != null 
           ? DateTime.parse(json['created_at']) 
           : DateTime.now(),
+      reaction: json['reaction'],
     );
   }
 
@@ -40,8 +43,32 @@ class Message {
       'content': content,
       'image_url': imageUrl,
       'created_at': createdAt.toIso8601String(),
+      'reaction': reaction,
     };
   }
 
+  Message copyWith({
+    String? id,
+    String? conversationId,
+    String? userId,
+    String? role,
+    String? content,
+    String? imageUrl,
+    DateTime? createdAt,
+    String? reaction,
+  }) {
+    return Message(
+      id: id ?? this.id,
+      conversationId: conversationId ?? this.conversationId,
+      userId: userId ?? this.userId,
+      role: role ?? this.role,
+      content: content ?? this.content,
+      imageUrl: imageUrl ?? this.imageUrl,
+      createdAt: createdAt ?? this.createdAt,
+      reaction: reaction ?? this.reaction,
+    );
+  }
+
   bool get isUser => role == 'user';
+  bool get isError => role == 'error';
 }
