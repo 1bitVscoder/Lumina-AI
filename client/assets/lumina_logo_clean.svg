@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFD54F" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#FFD54F" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE082"/>
+      <stop offset="100%" stop-color="#FFB300"/>
+    </linearGradient>
+    <linearGradient id="wingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E0F2F1" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#B2DFDB" stop-opacity="0.4"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background Glow Halo -->
+  <circle cx="50" cy="55" r="30" fill="url(#glow)"/>
+
+  <!-- Left Wing -->
+  <ellipse cx="32" cy="42" rx="16" ry="10" transform="rotate(-30 32 42)" fill="url(#wingGrad)"/>
+
+  <!-- Right Wing -->
+  <ellipse cx="68" cy="42" rx="16" ry="10" transform="rotate(30 68 42)" fill="url(#wingGrad)"/>
+
+  <!-- Antennae -->
+  <path d="M 44,32 C 42,24 35,24 35,24" stroke="#FF8F00" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <circle cx="35" cy="24" r="2" fill="#FF8F00"/>
+  <path d="M 56,32 C 58,24 65,24 65,24" stroke="#FF8F00" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <circle cx="65" cy="24" r="2" fill="#FF8F00"/>
+
+  <!-- Glow Tail (Abdomen) -->
+  <ellipse cx="50" cy="68" rx="14" ry="12" fill="#FFD54F"/>
+  <ellipse cx="50" cy="68" rx="9" ry="8" fill="#FFF59D"/>
+
+  <!-- Head & Torso -->
+  <circle cx="50" cy="46" r="18" fill="url(#bodyGrad)"/>
+
+  <!-- Little Rosy Cheeks -->
+  <circle cx="40" cy="48" r="25%" fill="#FF8A80" max-r="2"/>
+  <circle cx="40" cy="48" r="2" fill="#FF8A80"/>
+  <circle cx="60" cy="48" r="2" fill="#FF8A80"/>
+
+  <!-- Eyes -->
+  <circle cx="43" cy="44" r="2.5" fill="#3E2723"/>
+  <circle cx="57" cy="44" r="2.5" fill="#3E2723"/>
+
+  <!-- Smile -->
+  <path d="M 47,49 Q 50,53 53,49" stroke="#3E2723" stroke-width="2" stroke-linecap="round" fill="none"/>
+</svg>

@@ -1,0 +1,58 @@
+# Environments / Python virtual envs
+**/venv/
+**/.venv/
+**/env/
+**/.env*
+!**/.env.example
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Secrets / Config (protect backend and client credentials)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+assets/.env
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+.DS_Store
+
+# Flutter / Client Build outputs
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.pub-cache/
+**/.pub/
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+**/android/app/*.apk
+**/android/app/*.aab
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/Ephemeral/
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Runner/GeneratedPluginRegistrant.h
+**/ios/Runner/GeneratedPluginRegistrant.m
+**/linux/flutter/
+**/macos/Flutter/ephemeral/
+**/windows/flutter/
+
+# Local/OS generated
+Thumbs.db
+ehthumbs.db
+Icon?
